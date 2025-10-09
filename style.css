@@ -1,0 +1,352 @@
+/*
+ * --- Consolidated CSS: Volcanic Theme ---
+ * Integrating all original styles and applying suggested improvements:
+ * 1. Improved Mobile Navigation
+ * 2. Swapping 'em' for 'rem' in main headings/taglines for better scaling
+ * 3. Adding 'Lava Glow' box-shadow to primary buttons on hover
+ */
+
+/* --- VARIASI WARNA & FONT (Volcanic Theme) --- */
+:root {
+    --color-ash-black: #121212; /* Hampir hitam, background hero */
+    --color-dark-grey: #242424; /* Background body/produk */
+    --color-lava-red: #ff5722; /* Merah Lava: Aksen utama/CTA */
+    --color-lava-light: #ff7043; /* Oranye Lava: Highlight/Tagline */
+    --color-smoke-white: #f0f0f0; /* Teks putih keabu-abuan */
+    
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Poppins', sans-serif;
+    --font-code: 'Roboto Mono', monospace;
+}
+
+/* --- RESET & GLOBAL --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-dark-grey); 
+    color: var(--color-smoke-white); 
+    line-height: 1.6;
+    overflow-x: hidden; 
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    color: var(--color-smoke-white); 
+    text-transform: none;
+}
+
+h2 {
+    /* FIX: Changed 2.5em to 2.5rem */
+    font-size: 2.5rem; 
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--color-lava-light);
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--color-lava-red);
+    display: inline-block;
+    letter-spacing: 2px;
+    width: auto;
+}
+
+/* --- NAVIGASI (Potion Structure) --- */
+.hero-container {
+    flex-direction: column; 
+    padding-top: 20px;
+}
+.main-nav {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    width: 100%;
+    padding-bottom: 40px;
+}
+.logo {
+    font-size: 1.5em;
+    font-weight: 900;
+}
+.logo span {
+    color: var(--color-lava-red); 
+}
+.main-nav ul {
+    list-style: none;
+    text-align: right;
+    padding-top: 0;
+}
+.main-nav ul li {
+    display: inline-block;
+    margin-left: 25px;
+}
+.main-nav ul li a {
+    color: var(--color-smoke-white); 
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1em;
+    transition: color 0.3s;
+}
+.main-nav ul li a:hover {
+    color: var(--color-lava-red);
+}
+
+/* --- HEADER (HERO SECTION - Volcanic Potion Look) --- */
+.hero {
+    background-color: var(--color-ash-black); 
+    position: relative;
+    text-align: left; 
+    padding: 0 0 80px; 
+    box-shadow: none; 
+}
+
+/* TATA LETAK POTION 2-KOLOM */
+.hero-content-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 100px 0;
+    min-height: 500px;
+}
+
+.left-content {
+    flex: 1;
+    max-width: 50%; 
+}
+.hero h1 {
+    /* FIX: Changed 3.5em to 3.5rem */
+    font-size: 3.5rem; 
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-smoke-white); 
+}
+.highlight-text {
+    background-color: var(--color-lava-red); 
+    color: var(--color-ash-black); 
+    padding: 2px 8px;
+    border-radius: 5px;
+}
+.tagline {
+    /* FIX: Changed 1.4em to 1.4rem */
+    font-size: 1.4rem; 
+    font-weight: 400;
+    color: var(--color-lava-light) !important; 
+}
+.no-requirement {
+    font-size: 0.9em;
+    color: var(--color-smoke-white);
+    margin-top: 10px;
+}
+.right-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; 
+    max-width: 50%;
+}
+.mascot-img {
+    max-width: 100%;
+    height: auto;
+    transform: translateY(20px); 
+}
+
+/* --- TOMBOL (BTN) --- */
+.btn {
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 50px; 
+    font-weight: 700;
+    text-transform: uppercase;
+    /* FIX: Added box-shadow to transition for 'glow' effect */
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s; 
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.btn-primary { 
+    background-color: var(--color-lava-red);
+    color: white;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: var(--color-lava-light);
+    /* FIX: Added Lava Glow box-shadow */
+    box-shadow: 0 0 15px rgba(255, 112, 67, 0.7); 
+}
+
+.btn-secondary { 
+    background-color: var(--color-lava-red); 
+    color: white;
+    border: 2px solid var(--color-lava-red); 
+}
+.btn-secondary:hover {
+    background-color: var(--color-lava-light); 
+    color: white;
+    border-color: var(--color-lava-light);
+    /* FIX: Added Lava Glow box-shadow */
+    box-shadow: 0 0 15px rgba(255, 112, 67, 0.7); 
+}
+
+.btn-nav {
+    border: 1px solid var(--color-smoke-white);
+    padding: 5px 15px; 
+    border-radius: 50px; 
+    transition: all 0.3s;
+}
+.btn-nav:hover {
+    border-color: var(--color-lava-red);
+    color: var(--color-lava-red);
+    background-color: transparent;
+}
+.btn-hero {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.1em;
+    padding: 15px 30px;
+    margin-top: 25px;
+}
+.arrow-icon {
+    margin-left: 10px;
+    font-weight: 900;
+}
+
+
+/* --- PRODUK SECTION (Grid 2 kolom, Jeda & Outline) --- */
+.products {
+    padding: 80px 0;
+    background-color: var(--color-dark-grey); 
+}
+.product-grid {
+    grid-template-columns: 1fr 1fr; 
+    display: grid;
+    gap: 40px; 
+    padding: 0 20px;
+}
+.product-card {
+    background-color: var(--color-ash-black);
+    border: 3px solid #333; 
+    border-radius: 10px;
+    display: flex; 
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+.product-card:hover { 
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(255, 87, 34, 0.8); 
+    border-color: var(--color-lava-red);
+}
+.product-card img {
+    width: 40%;
+    height: auto;
+    object-fit: cover;
+    min-height: 250px;
+}
+.card-body {
+    padding: 25px;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.price-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; 
+}
+.price {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #ffcc00; 
+}
+
+
+/* ======================================= */
+/* --- PERBAIKAN RESPONSIVITAS (MOBILE) --- */
+/* ======================================= */
+@media (max-width: 900px) {
+    
+    /* HERO: Dari 2 kolom menjadi 1 kolom vertikal */
+    .hero-content-split {
+        flex-direction: column;
+        padding: 50px 0 0; 
+        text-align: center;
+        min-height: auto;
+    }
+    .left-content, .right-content {
+        max-width: 100%;
+        text-align: center;
+    }
+    .left-content {
+        order: 2; 
+    }
+    .right-content {
+        order: 1; 
+        margin-bottom: 40px;
+    }
+    .mascot-img {
+        max-width: 80%;
+        transform: translateY(0);
+    }
+    .hero h1 {
+        /* FIX: Changed 2.2em to 2.2rem */
+        font-size: 2.2rem; 
+    }
+
+    /* PRODUK */
+    .product-grid {
+        grid-template-columns: 1fr; /* 1 kolom penuh di HP */
+        gap: 30px; 
+        padding: 0;
+    }
+    .product-card {
+        flex-direction: column; /* Gambar di atas, info di bawah */
+    }
+    .product-card img {
+        width: 100%; 
+    }
+    .card-body {
+        width: 100%;
+    }
+    
+    /* NAVIGASI & FOOTER */
+    .main-nav {
+        /* FIX: Align center for better vertical stacking */
+        flex-direction: column;
+        align-items: center; 
+    }
+    .main-nav ul {
+        margin-top: 20px;
+        /* FIX: Center the links */
+        text-align: center; 
+    }
+    .main-nav ul li {
+        /* FIX: More balanced margin */
+        margin: 0 15px; 
+    }
+    /* FIX: Added tighter stacking for very small screens (optional) */
+    @media (max-width: 450px) {
+        .main-nav ul li {
+            display: block; 
+            margin: 10px 0; 
+        }
+    }
+    .btn-nav.btn-cta {
+        margin-left: 0;
+        margin-top: 15px;
+        display: block;
+    }
+    .footer-grid {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
