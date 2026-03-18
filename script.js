@@ -1,30 +1,32 @@
 /**
  * TUYUL VULKANIK Website JavaScript
- * Fungsionalitas: Smooth Scroll, Efek Hover, WhatsApp Automation, 
- * Mini Game Vulkanik, dan Sistem Klaim Diskon 50%.
+ * Fungsionalitas: Multi-Game (Coin & Runner), Smooth Scroll, 
+ * WhatsApp Automation, dan Sistem Diskon 50%.
  */
 
+let score = 0;
+let gameActive = false;
+let gameLoop;
+let isDiscountApplied = false;
+let selectedMode = ''; // 'coin' atau 'runner'
+
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Website TUYUL VULKANIK telah dimuat sepenuhnya.");
+    console.log("Website TUYUL VULKANIK - Arcade Mode Ready.");
     
-    // Inisialisasi Fungsi Bawaan
     smoothScrollNavigation();
     highlightActiveProductCards();
     setupWhatsAppOrdering(); 
-
-    // Inisialisasi Kontrol Game
     setupGameControls();
 });
 
-// -----------------------------------------------------------------
-// 1. Smooth Scroll & Efek Visual (Fungsi Asli)
-// -----------------------------------------------------------------
+// --- 1. NAVIGASI & VISUAL ---
 function smoothScrollNavigation() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            if (this.getAttribute('href').length > 1 && this.getAttribute('href') !== '#') {
+            const href = this.getAttribute('href');
+            if (href.length > 1 && href !== '#') {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const target = document.querySelector(href);
                 if (target) target.scrollIntoView({ behavior: 'smooth' });
             }
         });
@@ -34,190 +36,228 @@ function smoothScrollNavigation() {
 function highlightActiveProductCards() {
     const productCards = document.querySelectorAll('.product-card');
     productCards.forEach(card => {
-        card.addEventListener('touchstart', function() { this.classList.add('is-active'); });
-        card.addEventListener('touchend', function() { 
-            setTimeout(() => { this.classList.remove('is-active'); }, 500); 
-        });
         card.addEventListener('mouseenter', function() { this.classList.add('hover-js'); });
         card.addEventListener('mouseleave', function() { this.classList.remove('hover-js'); });
     });
 }
 
-// -----------------------------------------------------------------
-// 2. MINI GAME: KOIN VULKANIK
-// -----------------------------------------------------------------
-let score = 0;
-let gameActive = false;
-let gameLoop;
-let isDiscountApplied = false;
-
-function setupGameControls() {
-    const board = document.getElementById('game-board');
-    if (!board) return;
-
-    const moveHandler = (e) => {
-        if (!gameActive) return;
-        const rect = board.getBoundingClientRect();
-        let x = (e.type === 'touchmove') ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-        
-        const player = document.getElementById('player');
-        // Memastikan player tetap di dalam kotak
-        if (x > 30 && x < rect.width - 30) {
-            player.style.left = (x - 30) + 'px';
-        }
-    };
-
-    board.addEventListener('mousemove', moveHandler);
-    board.addEventListener('touchmove', moveHandler, { passive: false });
-}
-
-function playSound(id) {
-    const sound = document.getElementById(id);
-    if (sound) {
-        sound.currentTime = 0;
-        sound.play().catch(() => console.log("Audio play blocked by browser"));
+// --- 2. SISTEM MENU & KONTROL GAME ---
+function selectGame(mode) {
+    selectedMode = mode;
+    gameActive = false;
+    clearTimeout(gameLoop);
+    
+    // UI Switch
+    document.getElementById('game-menu').style.display = 'none';
+    document.getElementById('game-window').style.display = 'block';
+    document.getElementById('voucher-popup').style.display = 'none';
+    
+    const player = document.getElementById('player');
+    
+    if(mode === 'runner') {
+        player.innerHTML = '<img src="maskot-tuyul.png" style="width:50px; height:auto;">';
+        player.className = 'player-runner';
+        player.style.left = "50px";
+        player.style.bottom = "10px";
+        player.style.top = "auto";
+    } else {
+        player.innerHTML = '🌋';
+        player.className = 'player-coin';
+        player.style.left = "50%";
+        player.style.bottom = "10px";
     }
 }
 
-function startGame() {
-    score = 0;
-    gameActive = true;
-    document.getElementById('voucher-popup').style.display = 'none';
-    document.getElementById('score').innerText = "Skor: 0";
-    document.getElementById('game-board').style.display = 'block';
-    document.getElementById('start-btn').innerText = "ULANGI GAME";
-    
-    // Bersihkan koin lama
-    document.querySelectorAll('.coin').forEach(c => c.remove());
-    spawnCoin();
+function backToMenu() {
+    gameActive = false;
+    clearTimeout(gameLoop);
+    document.querySelectorAll('.coin, .obstacle, .bomb').forEach(el => el.remove());
+    document.getElementById('game-menu').style.display = 'block';
+    document.getElementById('game-window').style.display = 'none';
 }
 
+function startAction() {
+    if(gameActive) return;
+    score = 0;
+    gameActive = true;
+    document.getElementById('score').innerText = "Skor: 0";
+    document.getElementById('voucher-popup').style.display = 'none';
+    
+    // Hapus objek lama
+    document.querySelectorAll('.coin, .obstacle').forEach(el => el.remove());
+
+    if(selectedMode === 'coin') {
+        spawnCoin();
+    } else {
+        spawnObstacle();
+    }
+}
+
+// --- 3. LOGIKA GAME KOIN ---
 function spawnCoin() {
-    if (!gameActive) return;
+    if (!gameActive || selectedMode !== 'coin') return;
     
     const board = document.getElementById('game-board');
     const coin = document.createElement('div');
     coin.className = 'coin';
     coin.innerHTML = '💰';
-    coin.style.position = 'absolute';
     coin.style.left = Math.random() * (board.offsetWidth - 40) + 'px';
     coin.style.top = '-40px';
     board.appendChild(coin);
 
-    let speed = 4 + (score / 50); 
-    
-    let fallInterval = setInterval(() => {
-        if (!gameActive) {
-            clearInterval(fallInterval);
-            coin.remove();
-            return;
-        }
-
+    let fall = setInterval(() => {
+        if (!gameActive) { clearInterval(fall); coin.remove(); return; }
+        
         let top = parseInt(coin.style.top);
-        if (top > 350) {
-            const player = document.getElementById('player');
-            const pLeft = parseInt(player.style.left || (board.offsetWidth/2 - 30));
-            const cLeft = parseInt(coin.style.left);
-            
-            // Deteksi Tabrakan
-            if (cLeft >= pLeft - 25 && cLeft <= pLeft + 45) {
-                score += 10;
-                document.getElementById('score').innerText = "Skor: " + score;
-                playSound('sfx-coin');
-                
-                if (score >= 100 && !isDiscountApplied) {
-                    showVoucher();
-                }
-                clearInterval(fallInterval);
-                coin.remove();
-            } else if (top > 400) {
-                playSound('sfx-vulkanik');
-                clearInterval(fallInterval);
-                coin.remove();
-            } else {
-                coin.style.top = (top + speed) + 'px';
-            }
+        const player = document.getElementById('player');
+        const pLeft = player.offsetLeft;
+        const cLeft = coin.offsetLeft;
+
+        // Deteksi Tangkap
+        if (top > 340 && top < 380 && cLeft >= pLeft - 30 && cLeft <= pLeft + 50) {
+            score += 10;
+            document.getElementById('score').innerText = "Skor: " + score;
+            if(score >= 100) showWin();
+            clearInterval(fall);
+            coin.remove();
+        } else if (top > 400) {
+            clearInterval(fall);
+            coin.remove();
         } else {
-            coin.style.top = (top + speed) + 'px';
+            coin.style.top = (top + 6) + 'px';
         }
     }, 20);
 
-    gameLoop = setTimeout(spawnCoin, Math.max(400, 1000 - score * 2)); 
+    gameLoop = setTimeout(spawnCoin, Math.max(400, 1000 - score * 2));
 }
 
-function showVoucher() {
-    gameActive = false; // Hentikan game sementara
+// --- 4. LOGIKA GAME RUNNER ---
+function spawnObstacle() {
+    if (!gameActive || selectedMode !== 'runner') return;
+    
+    const board = document.getElementById('game-board');
+    const obs = document.createElement('div');
+    obs.className = 'obstacle';
+    obs.innerHTML = '🔥'; 
+    board.appendChild(obs);
+
+    let pos = board.offsetWidth;
+    let move = setInterval(() => {
+        if (!gameActive) { clearInterval(move); obs.remove(); return; }
+        
+        pos -= (7 + score/50);
+        obs.style.left = pos + 'px';
+
+        const player = document.getElementById('player');
+        let pBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
+        
+        // Deteksi Tabrakan
+        if (pos < 90 && pos > 40 && pBottom < 50) {
+            gameActive = false;
+            alert("Yah! TuyOul-mu kena api. Skor akhir: " + score);
+            backToMenu();
+            clearInterval(move);
+            obs.remove();
+        }
+
+        if (pos < -50) {
+            score += 10;
+            document.getElementById('score').innerText = "Skor: " + score;
+            if(score >= 100) showWin();
+            clearInterval(move);
+            obs.remove();
+        }
+    }, 20);
+
+    gameLoop = setTimeout(spawnObstacle, Math.random() * (2000 - 1000) + 1000);
+}
+
+// --- 5. KONTROL INPUT (KEYBOARD & TOUCH) ---
+function setupGameControls() {
+    // Gerakan Keyboard
+    window.addEventListener("keydown", (e) => {
+        if(!gameActive) return;
+        const player = document.getElementById('player');
+        
+        // Loncat (Runner)
+        if (e.code === "Space" && selectedMode === 'runner') {
+            if (!player.classList.contains("jump-animation")) {
+                player.classList.add("jump-animation");
+                setTimeout(() => player.classList.remove("jump-animation"), 500);
+            }
+        }
+        // Geser (Coin)
+        if (selectedMode === 'coin') {
+            let left = player.offsetLeft;
+            if(e.key === "ArrowLeft" && left > 20) player.style.left = (left - 30) + "px";
+            if(e.key === "ArrowRight" && left < 330) player.style.left = (left + 30) + "px";
+        }
+    });
+
+    // Tap Layar (HP)
+    document.getElementById('game-board').addEventListener('touchstart', (e) => {
+        if(!gameActive) return;
+        if(selectedMode === 'runner') {
+            const player = document.getElementById('player');
+            if (!player.classList.contains("jump-animation")) {
+                player.classList.add("jump-animation");
+                setTimeout(() => player.classList.remove("jump-animation"), 500);
+            }
+        }
+    });
+}
+
+function showWin() {
+    gameActive = false;
+    clearTimeout(gameLoop);
     document.getElementById('voucher-popup').style.display = 'block';
 }
 
-// -----------------------------------------------------------------
-// 3. SISTEM DISKON & UPDATE HARGA
-// -----------------------------------------------------------------
+// --- 6. DISKON & WHATSAPP ---
 function applyDiscount() {
     isDiscountApplied = true;
     document.getElementById('voucher-popup').style.display = 'none';
     
     const priceElements = document.querySelectorAll('.display-price');
-    
     priceElements.forEach(el => {
         const originalValue = parseInt(el.getAttribute('data-original'));
         const discountedValue = originalValue * 0.5;
         
-        // Format Rupiah
-        const formattedPrice = new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(discountedValue);
-
-        el.classList.add('discounted'); // CSS untuk coret harga lama
+        el.style.textDecoration = "line-through";
+        el.style.color = "#888";
         
-        // Cek jika span harga baru belum ada
         if (!el.nextElementSibling || !el.nextElementSibling.classList.contains('new-price')) {
             const newPriceTag = document.createElement('span');
             newPriceTag.className = 'new-price';
-            newPriceTag.innerText = " " + formattedPrice;
+            newPriceTag.style.color = "#ff5722";
+            newPriceTag.style.fontWeight = "bold";
+            newPriceTag.innerText = " Rp " + discountedValue.toLocaleString('id-ID');
             el.parentNode.insertBefore(newPriceTag, el.nextSibling);
         }
     });
-
-    alert("🔥 MANTAP! Diskon 50% Berhasil Diklaim. Harga koleksi sudah dipotong!");
+    alert("🔥 MANTAP! Diskon 50% Berhasil Diklaim.");
 }
 
-// -----------------------------------------------------------------
-// 4. OTOMATISASI WHATSAPP (Diperbarui dengan info diskon)
-// -----------------------------------------------------------------
 function setupWhatsAppOrdering() {
-    const orderButtons = document.querySelectorAll('.product-card .btn-secondary'); 
-    
-    orderButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            if (button.href.includes('wa.me')) {
-                e.preventDefault(); 
-                
-                const card = button.closest('.product-card');
-                if (card) {
-                    const namaProduk = card.querySelector('.product-title').innerText;
-                    const kodeProduk = card.querySelector('.product-code').innerText;
-                    const hargaElemen = card.querySelector('.new-price') || card.querySelector('.display-price');
-                    const hargaFinal = hargaElemen.innerText;
-                    
-                    const waBaseUrl = button.href.split('?')[0]; 
-                    
-                    const statusDiskon = isDiscountApplied ? "*SUDAH KLAIM DISKON 50%*" : "Harga Normal";
-                    
-                    const pesan = encodeURIComponent(
-                        `🌋 Order TUYUL VULKANIK 🌋\n\n` +
-                        `Halo, saya ingin memesan produk berikut:\n` +
-                        `*Produk:* ${namaProduk}\n` +
-                        `*Kode:* ${kodeProduk}\n` +
-                        `*Harga:* ${hargaFinal} (${statusDiskon})\n\n` +
-                        `Mohon informasikan metode pembayarannya. Terima kasih!`
-                    );
-                    
-                    window.open(`${waBaseUrl}?text=${pesan}`, '_blank');
-                }
-            }
-        });
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-secondary')) {
+            const card = e.target.closest('.product-card');
+            if (!card) return;
+
+            e.preventDefault();
+            const namaProduk = card.querySelector('.product-title').innerText;
+            const hargaFinal = card.querySelector('.new-price')?.innerText || card.querySelector('.display-price').innerText;
+            const statusDiskon = isDiscountApplied ? "*SUDAH KLAIM DISKON 50%*" : "Harga Normal";
+            
+            const pesan = encodeURIComponent(
+                `🌋 Order TUYUL VULKANIK 🌋\n\n` +
+                `Produk: ${namaProduk}\n` +
+                `Harga: ${hargaFinal}\n` +
+                `Status: ${statusDiskon}\n\n` +
+                `Mohon info pembayarannya!`
+            );
+            
+            window.open(`https://wa.me/6281804554719?text=${pesan}`, '_blank');
+        }
     });
 }
