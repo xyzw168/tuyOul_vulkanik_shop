@@ -287,3 +287,103 @@ h2 {
     animation: none;
     transform: scaleX(-1) rotate(-10deg);
 }
+/* --- TUYOUL FLAPPY STYLING --- */
+.player-flappy {
+    position: absolute;
+    z-index: 10;
+    font-size: 50px;
+    transition: top 0.1s linear; /* Membuat pergerakan jatuh lebih smooth */
+}
+
+.pipe {
+    position: absolute;
+    width: 60px;
+    /* Gradasi warna lava cair */
+    background: linear-gradient(90deg, #bf360c, #ff5722, #bf360c);
+    border-left: 4px solid #ffcc00;
+    border-right: 4px solid #ffcc00;
+    box-shadow: 0 0 20px rgba(255, 87, 34, 0.5);
+    z-index: 5;
+}
+
+/* Tambahkan moncong pipa agar lebih bertekstur */
+.pipe::after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 20px;
+    left: -5px;
+    background: #ff5722;
+    border: 3px solid #ffcc00;
+}
+
+/* Pipa atas moncongnya di bawah, pipa bawah moncongnya di atas */
+[style*="top: 0"]::after { bottom: 0; }
+[style*="bottom: 0"]::after { top: 0; }
+/* --- QUIZ WINDOW STYLING --- */
+#quiz-window {
+    display: none; /* Default sembunyi */
+    margin: 20px auto;
+    max-width: 800px;
+    animation: fadeIn 0.5s ease;
+}
+
+#quiz-container {
+    background: var(--color-ash-black);
+    padding: 30px;
+    border-radius: 20px;
+    border: 3px solid var(--color-lava-red);
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+    text-align: left;
+}
+
+#quiz-question {
+    font-size: 1.2rem;
+    color: var(--color-smoke-white);
+    margin-bottom: 25px;
+    line-height: 1.6;
+    border-left: 5px solid var(--color-gold);
+    padding-left: 15px;
+}
+
+#quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#quiz-options .btn-secondary {
+    text-align: left;
+    padding: 15px 20px;
+    background: #222;
+    border: 1px solid #444;
+    text-transform: none; /* Biar huruf tidak kapital semua */
+    font-size: 1rem;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+#quiz-options .btn-secondary:hover {
+    background: var(--color-lava-red);
+    border-color: var(--color-gold);
+    transform: translateX(10px); /* Efek geser sedikit saat hover */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Perbaikan layout tombol menu game */
+.menu-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 Kolom sejajar */
+    gap: 15px;
+    max-width: 500px;
+    margin: 25px auto 0;
+}
+
+@media (max-width: 600px) {
+    .menu-buttons {
+        grid-template-columns: 1fr; /* Jadi 1 kolom di HP layar kecil */
+    }
+}
