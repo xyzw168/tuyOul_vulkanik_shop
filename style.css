@@ -263,3 +263,27 @@ h2 {
     .main-nav ul li { margin: 0 10px; }
     .menu-buttons { flex-direction: column; align-items: center; }
 }
+/* Styling Gambar di dalam Player */
+.tuyul-sprite {
+    width: 80px; /* Sesuaikan ukuran maskotmu */
+    height: auto;
+    /* SOLUSI ARAH: Jika gambar aslimu hadap kiri, gunakan scaleX(-1) untuk membalik ke kanan */
+    transform: scaleX(-1); 
+    display: block;
+}
+
+/* SOLUSI ANIMASI LARI: Membuat efek lari (jogging) */
+.player-runner .tuyul-sprite {
+    animation: tuyulRun 0.25s infinite alternate ease-in-out;
+}
+
+@keyframes tuyulRun {
+    from { transform: scaleX(-1) translateY(0); }
+    to { transform: scaleX(-1) translateY(-8px) rotate(-3deg); }
+}
+
+/* Saat loncat, hentikan animasi lari supaya terlihat natural */
+.jump-animation .tuyul-sprite {
+    animation: none;
+    transform: scaleX(-1) rotate(-10deg);
+}
