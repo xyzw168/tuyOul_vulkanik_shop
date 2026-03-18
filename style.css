@@ -1,18 +1,15 @@
-/*
- * --- Consolidated CSS: Volcanic Theme ---
- * Integrating all original styles and applying suggested improvements:
- * 1. Improved Mobile Navigation
- * 2. Swapping 'em' for 'rem' in main headings/taglines for better scaling
- * 3. Adding 'Lava Glow' box-shadow to primary buttons on hover
+/* * --- FINAL TUYoUL VULKANIK STYLESHEET ---
+ * Theme: Volcanic Potion (Dark Ash & Glowing Lava)
  */
 
-/* --- VARIASI WARNA & FONT (Volcanic Theme) --- */
+/* --- VARIASI WARNA & FONT --- */
 :root {
-    --color-ash-black: #121212; /* Hampir hitam, background hero */
-    --color-dark-grey: #242424; /* Background body/produk */
-    --color-lava-red: #ff5722; /* Merah Lava: Aksen utama/CTA */
-    --color-lava-light: #ff7043; /* Oranye Lava: Highlight/Tagline */
-    --color-smoke-white: #f0f0f0; /* Teks putih keabu-abuan */
+    --color-ash-black: #121212; 
+    --color-dark-grey: #1a1a1a; 
+    --color-lava-red: #ff5722; 
+    --color-lava-light: #ff7043; 
+    --color-smoke-white: #f0f0f0; 
+    --color-gold: #ffcc00;
     
     --font-heading: 'Poppins', sans-serif;
     --font-body: 'Poppins', sans-serif;
@@ -20,11 +17,7 @@
 }
 
 /* --- RESET & GLOBAL --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: var(--font-body);
@@ -41,14 +34,8 @@ body {
     padding: 20px 0;
 }
 
-h1, h2, h3 {
-    font-family: var(--font-heading);
-    color: var(--color-smoke-white); 
-    text-transform: none;
-}
-
+/* --- TYPOGRAPHY --- */
 h2 {
-    /* FIX: Changed 2.5em to 2.5rem */
     font-size: 2.5rem; 
     text-align: center;
     margin-bottom: 50px;
@@ -57,296 +44,132 @@ h2 {
     border-bottom: 3px solid var(--color-lava-red);
     display: inline-block;
     letter-spacing: 2px;
-    width: auto;
 }
 
-/* --- NAVIGASI (Potion Structure) --- */
-.hero-container {
-    flex-direction: column; 
-    padding-top: 20px;
-}
+/* --- NAVIGASI --- */
 .main-nav {
     display: flex;
     justify-content: space-between; 
     align-items: center;
-    width: 100%;
-    padding-bottom: 40px;
+    padding: 20px 0 40px;
 }
-.logo {
-    font-size: 1.5em;
-    font-weight: 900;
-}
-.logo span {
-    color: var(--color-lava-red); 
-}
-.main-nav ul {
-    list-style: none;
-    text-align: right;
-    padding-top: 0;
-}
-.main-nav ul li {
-    display: inline-block;
-    margin-left: 25px;
-}
+.logo { font-size: 1.5rem; font-weight: 900; }
+.logo span { color: var(--color-lava-red); }
+.main-nav ul { list-style: none; }
+.main-nav ul li { display: inline-block; margin-left: 25px; }
 .main-nav ul li a {
     color: var(--color-smoke-white); 
     text-decoration: none;
     font-weight: 600;
-    font-size: 1em;
     transition: color 0.3s;
 }
-.main-nav ul li a:hover {
-    color: var(--color-lava-red);
-}
+.main-nav ul li a:hover { color: var(--color-lava-red); }
 
-/* --- HEADER (HERO SECTION - Volcanic Potion Look) --- */
-.hero {
-    background-color: var(--color-ash-black); 
-    position: relative;
-    text-align: left; 
-    padding: 0 0 80px; 
-    box-shadow: none; 
-}
-
-/* TATA LETAK POTION 2-KOLOM */
+/* --- HERO SECTION --- */
+.hero { background-color: var(--color-ash-black); padding-bottom: 80px; }
 .hero-content-split {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 100px 0;
-    min-height: 500px;
+    padding: 80px 0;
 }
-
-.left-content {
-    flex: 1;
-    max-width: 50%; 
-}
-.hero h1 {
-    /* FIX: Changed 3.5em to 3.5rem */
-    font-size: 3.5rem; 
-    font-weight: 800;
-    line-height: 1.2;
-    color: var(--color-smoke-white); 
-}
+.left-content { flex: 1; max-width: 55%; }
+.hero h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.2; }
 .highlight-text {
     background-color: var(--color-lava-red); 
     color: var(--color-ash-black); 
     padding: 2px 8px;
     border-radius: 5px;
 }
-.tagline {
-    /* FIX: Changed 1.4em to 1.4rem */
-    font-size: 1.4rem; 
-    font-weight: 400;
-    color: var(--color-lava-light) !important; 
-}
-.no-requirement {
-    font-size: 0.9em;
-    color: var(--color-smoke-white);
-    margin-top: 10px;
-}
-.right-content {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end; 
-    max-width: 50%;
-}
-.mascot-img {
-    max-width: 100%;
-    height: auto;
-    transform: translateY(20px); 
-}
+.tagline { font-size: 1.4rem; color: var(--color-lava-light) !important; margin: 20px 0; }
+.right-content { flex: 1; display: flex; justify-content: center; }
+.mascot-img { max-width: 90%; height: auto; filter: drop-shadow(0 0 20px rgba(255,87,34,0.3)); }
 
-/* --- TOMBOL (BTN) --- */
+/* --- BUTTONS --- */
 .btn {
-    padding: 10px 20px;
+    padding: 12px 25px;
     text-decoration: none;
     border-radius: 50px; 
     font-weight: 700;
     text-transform: uppercase;
-    /* FIX: Added box-shadow to transition for 'glow' effect */
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s; 
-    font-size: 0.9em;
+    transition: all 0.3s ease;
     cursor: pointer;
+    display: inline-block;
 }
+.btn-primary, .btn-secondary { background: var(--color-lava-red); color: white; border: none; }
+.btn-primary:hover, .btn-secondary:hover {
+    background: var(--color-lava-light);
+    box-shadow: 0 0 20px rgba(255, 112, 67, 0.6);
+    transform: translateY(-2px);
+}
+.btn-shopee { background: #ee4d2d; color: white; margin-left: 10px; }
 
-.btn-primary { 
-    background-color: var(--color-lava-red);
-    color: white;
-    border: none;
-}
-.btn-primary:hover {
-    background-color: var(--color-lava-light);
-    /* FIX: Added Lava Glow box-shadow */
-    box-shadow: 0 0 15px rgba(255, 112, 67, 0.7); 
-}
-
-.btn-secondary { 
-    background-color: var(--color-lava-red); 
-    color: white;
-    border: 2px solid var(--color-lava-red); 
-}
-.btn-secondary:hover {
-    background-color: var(--color-lava-light); 
-    color: white;
-    border-color: var(--color-lava-light);
-    /* FIX: Added Lava Glow box-shadow */
-    box-shadow: 0 0 15px rgba(255, 112, 67, 0.7); 
-}
-
-.btn-nav {
-    border: 1px solid var(--color-smoke-white);
-    padding: 5px 15px; 
-    border-radius: 50px; 
-    transition: all 0.3s;
-}
-.btn-nav:hover {
-    border-color: var(--color-lava-red);
-    color: var(--color-lava-red);
-    background-color: transparent;
-}
-.btn-hero {
-    display: inline-flex;
-    align-items: center;
-    font-size: 1.1em;
-    padding: 15px 30px;
-    margin-top: 25px;
-}
-.arrow-icon {
-    margin-left: 10px;
-    font-weight: 900;
-}
-
-
-/* --- PRODUK SECTION (Grid 2 kolom, Jeda & Outline) --- */
-.products {
-    padding: 80px 0;
-    background-color: var(--color-dark-grey); 
-}
+/* --- PRODUCT GRID --- */
+.products { padding: 80px 0; }
 .product-grid {
-    grid-template-columns: 1fr 1fr; 
     display: grid;
-    gap: 40px; 
-    padding: 0 20px;
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px; 
 }
 .product-card {
     background-color: var(--color-ash-black);
-    border: 3px solid #333; 
-    border-radius: 10px;
+    border: 2px solid #333; 
+    border-radius: 15px;
     display: flex; 
     overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    transition: all 0.3s ease;
 }
 .product-card:hover { 
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(255, 87, 34, 0.8); 
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(255, 87, 34, 0.4); 
     border-color: var(--color-lava-red);
 }
-.product-card img {
-    width: 40%;
-    height: auto;
-    object-fit: cover;
-    min-height: 250px;
+.product-card img { width: 40%; object-fit: cover; }
+.card-body { padding: 20px; width: 60%; display: flex; flex-direction: column; }
+.price { font-size: 1.6rem; font-weight: 800; color: var(--color-gold); margin: 10px 0; }
+
+/* --- MINI GAME STYLES --- */
+#game-board {
+    background: #0a0a0a;
+    border: 3px solid var(--color-lava-red);
+    border-radius: 20px;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+    margin: 40px auto;
+    max-width: 800px;
 }
-.card-body {
-    padding: 25px;
-    width: 60%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+#player { font-size: 50px; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); }
+.coin { 
+    position: absolute; 
+    font-size: 25px; 
+    animation: spin 0.6s infinite linear; 
 }
-.price-action {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto; 
+@keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+
+/* --- DISCOUNT SYSTEM VISUALS --- */
+.price.discounted {
+    text-decoration: line-through;
+    color: #777 !important;
+    font-size: 1rem;
+    margin-right: 10px;
 }
-.price {
-    font-size: 1.8em;
-    font-weight: 700;
-    color: #ffcc00; 
+.new-price {
+    color: #4caf50;
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
 }
 
-
-/* ======================================= */
-/* --- PERBAIKAN RESPONSIVITAS (MOBILE) --- */
-/* ======================================= */
+/* --- RESPONSIVE --- */
 @media (max-width: 900px) {
-    
-    /* HERO: Dari 2 kolom menjadi 1 kolom vertikal */
-    .hero-content-split {
-        flex-direction: column;
-        padding: 50px 0 0; 
-        text-align: center;
-        min-height: auto;
-    }
-    .left-content, .right-content {
-        max-width: 100%;
-        text-align: center;
-    }
-    .left-content {
-        order: 2; 
-    }
-    .right-content {
-        order: 1; 
-        margin-bottom: 40px;
-    }
-    .mascot-img {
-        max-width: 80%;
-        transform: translateY(0);
-    }
-    .hero h1 {
-        /* FIX: Changed 2.2em to 2.2rem */
-        font-size: 2.2rem; 
-    }
-
-    /* PRODUK */
-    .product-grid {
-        grid-template-columns: 1fr; /* 1 kolom penuh di HP */
-        gap: 30px; 
-        padding: 0;
-    }
-    .product-card {
-        flex-direction: column; /* Gambar di atas, info di bawah */
-    }
-    .product-card img {
-        width: 100%; 
-    }
-    .card-body {
-        width: 100%;
-    }
-    
-    /* NAVIGASI & FOOTER */
-    .main-nav {
-        /* FIX: Align center for better vertical stacking */
-        flex-direction: column;
-        align-items: center; 
-    }
-    .main-nav ul {
-        margin-top: 20px;
-        /* FIX: Center the links */
-        text-align: center; 
-    }
-    .main-nav ul li {
-        /* FIX: More balanced margin */
-        margin: 0 15px; 
-    }
-    /* FIX: Added tighter stacking for very small screens (optional) */
-    @media (max-width: 450px) {
-        .main-nav ul li {
-            display: block; 
-            margin: 10px 0; 
-        }
-    }
-    .btn-nav.btn-cta {
-        margin-left: 0;
-        margin-top: 15px;
-        display: block;
-    }
-    .footer-grid {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
+    .hero-content-split { flex-direction: column; text-align: center; }
+    .left-content, .right-content { max-width: 100%; }
+    .hero h1 { font-size: 2.2rem; }
+    .product-grid { grid-template-columns: 1fr; }
+    .product-card { flex-direction: column; }
+    .product-card img { width: 100%; height: 200px; }
+    .card-body { width: 100%; }
+    .main-nav { flex-direction: column; }
+    .main-nav ul { margin-top: 20px; }
 }
