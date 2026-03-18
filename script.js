@@ -38,28 +38,51 @@ function startQuiz() {
 }
 
 function loadQuestion(index) {
+    // 1. Cek apakah kuis sudah selesai
     if (index >= quizData.length) {
-        if (quizScore >= 70) {
-            alert("🔥 Skor: " + quizScore + ". Lulus Seleksi! Diskon Aktif!");
+        alert("📊 KUIS SELESAI!\nTotal Skor: " + quizScore + " / 100");
+        
+        // Syarat lulus minimal 90 (Hanya boleh salah 1)
+        if (quizScore >= 90) {
+            alert("🔥 GOKIL! Kamu emang TuyOul Jenius. Diskon 50% Aktif!");
             applyDiscount();
             showWin();
         } else {
-            alert("Skor " + quizScore + ". Belum cukup sakti!");
+            alert("Skor kamu " + quizScore + ". Belum tembus target 90. Coba lagi sampai hafal!");
             backToMenu();
         }
         return;
     }
+
+    // 2. Tampilkan Pertanyaan
     const data = quizData[index];
-    document.getElementById('quiz-question').innerText = `Pertanyaan ${index + 1}: ${data.q}`;
+    const quizQ = document.getElementById('quiz-question');
     const optionsDiv = document.getElementById('quiz-options');
-    optionsDiv.innerHTML = '';
+    
+    quizQ.innerText = `Soal ${index + 1} / 10:\n${data.q}`;
+    optionsDiv.innerHTML = ''; 
+    
+    // 3. Buat Pilihan Jawaban
     data.a.forEach((opt, i) => {
         const btn = document.createElement('button');
         btn.className = 'btn btn-secondary';
-        btn.innerText = opt;
+        btn.style.width = "100%";
+        btn.style.marginBottom = "10px";
+        btn.style.textAlign = "left";
+        btn.innerText = `${String.fromCharCode(65 + i)}. ${opt}`;
+        
         btn.onclick = () => {
-            if (i === data.correct) { quizScore += 10; loadQuestion(index + 1); }
-            else { alert("Salah!"); backToMenu(); }
+            // Cek Jawaban
+            if (i === data.correct) {
+                quizScore += 10;
+                alert("✅ MANTAP! Jawabanmu benar.");
+            } else {
+                // HANYA NOTIFIKASI SALAH (Tanpa bocoran)
+                alert("❌ SALAH!\n\nSayang sekali poinmu tidak bertambah. Fokus ke soal berikutnya!");
+            }
+            
+            // Pindah ke soal berikutnya
+            loadQuestion(index + 1);
         };
         optionsDiv.appendChild(btn);
     });
