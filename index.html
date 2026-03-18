@@ -160,11 +160,11 @@
 
 <section id="game-section" class="game-container">
     <div class="container">
-<h2>🎮 TUYooUL GAMES 🎮</h2>
+        <h2>🎮 TUYooUL GAMES 🎮</h2>
         
         <div id="game-menu" class="game-menu">
             <p>Pilih Tantanganmu untuk Diskon 50%:</p>
-            <div class="menu-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="menu-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
                 <button onclick="selectGame('coin')" class="btn btn-primary">💰 KOIN TUYooUL</button>
                 <button onclick="selectGame('runner')" class="btn btn-primary">🏃 TUYooUL RUNNER</button>
                 <button onclick="selectGame('flappy')" class="btn btn-primary">🦇 TUYooUL FLAPPY</button>
@@ -174,39 +174,36 @@
 
         <div id="game-window" style="display:none;">
             <div id="game-board">
-                <div id="player">🌋</div>
+                <div id="player"></div>
                 <div id="score">Skor: 0</div>
                 
-                <div id="voucher-popup" class="popup-style">
+                <div id="voucher-popup" class="popup-style" style="display:none;">
                     <h3>🎉 DISKON TERBUKA!</h3>
-                    <button onclick="applyDiscount()" class="btn btn-primary">KLAIM 50%</button>
+                    <p>Kamu berhasil mencapai target!</p>
+                    <button onclick="applyDiscount()" class="btn btn-primary">KLAIM DISKON 50%</button>
                 </div>
             </div>
             
-            <div class="game-controls" style="text-align:center; margin-top:15px;">
-                <button id="start-btn" onclick="startAction()" class="btn btn-primary">MULAI</button>
-                <button onclick="backToMenu()" class="btn btn-secondary">GANTI GAME</button>
+            <div class="game-controls-ui" style="text-align:center; margin-top:20px;">
+                <button id="start-btn" onclick="startAction()" class="btn btn-primary">MULAI MAIN</button>
+                <button id="virtual-jump-btn" class="btn btn-shopee" style="display:none;">JUMP!</button>
+                <button onclick="backToMenu()" class="btn btn-secondary">KEMBALI KE MENU</button>
             </div>
         </div>
 
         <div id="quiz-window" style="display:none;">
-            <div id="quiz-container" style="max-width: 600px; margin: 0 auto; background: #1a1a1a; padding: 30px; border-radius: 20px; border: 3px solid #ff5722;">
+            <div id="quiz-container" style="max-width: 600px; margin: 0 auto; background: #1a1a1a; padding: 30px; border-radius: 20px; border: 3px solid #ff5722; box-shadow: 0 0 20px rgba(255,87,34,0.3);">
                 <div id="quiz-header">
-                    <span style="color: #ffcc00; font-weight: bold;">TUYooUL LOGIC</span>
+                    <span style="color: #ffcc00; font-weight: bold; letter-spacing: 2px;">TUYooUL LOGIC TEST </span>
                     <hr style="border: 1px solid #333; margin: 15px 0;">
                 </div>
-                <h3 id="quiz-question" style="margin-bottom: 20px; line-height: 1.5;">Memuat soal...</h3>
-                <div id="quiz-options" style="display: flex; flex-direction: column; gap: 10px;">
+                <h3 id="quiz-question" style="margin-bottom: 25px; line-height: 1.6; color: #fff; font-size: 1.2rem;">Memuat soal...</h3>
+                <div id="quiz-options">
                     </div>
-                <button onclick="backToMenu()" class="btn btn-secondary" style="margin-top: 20px; width: 100%;">MENYERAH</button>
+                <button onclick="backToMenu()" class="btn btn-secondary" style="margin-top: 25px; width: 100%; opacity: 0.7;">MENYERAH</button>
             </div>
         </div>
-            
-            <div class="game-controls">
-                <button onclick="startAction()" class="btn btn-primary" id="start-btn">MULAI</button>
-                <button onclick="backToMenu()" class="btn btn-secondary">GANTI GAME</button>
-            </div>
-        </div>
+        
     </div>
 </section>
 
