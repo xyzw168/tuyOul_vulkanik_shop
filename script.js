@@ -1,6 +1,5 @@
 /**
- * TUYUL VULKANIK - OFFICIAL ARCADE SCRIPT (FULL VERSION)
- * Fitur: Coin, Runner, Flappy, Quiz 10 Soal, WhatsApp Order, & Auto Discount.
+ * TUYUL VULKANIK - OFFICIAL ARCADE SCRIPT (OPTIMIZED FOR 1000 PTS)
  */
 
 let score = 0;
@@ -10,16 +9,14 @@ let gameLoop;
 let isDiscountApplied = false;
 let selectedMode = ''; 
 
-// Inisialisasi saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
     smoothScrollNavigation();
     highlightActiveProductCards();
     setupWhatsAppOrdering(); 
     setupGameControls();
-    console.log("TuyOul Arcade System Ready!");
 });
 
-// --- 1. DATA KUIS (10 SOAL PENALARAN UMUM UTBK) ---
+// --- 1. DATA KUIS ---
 const quizData = [
     { q: "Semua TuyOul suka abu vulkanik. Sebagian penghuni kawah bukan TuyOul. Kesimpulannya?", a: ["Semua penghuni kawah suka abu", "Sebagian penghuni kawah suka abu", "Ada penghuni kawah yang bukan TuyOul"], correct: 2 },
     { q: "Jika stok TuyOul melimpah, maka harga diskon. Saat ini harga tidak diskon. Maka...", a: ["Stok TuyOul tidak melimpah", "Stok TuyOul sangat banyak", "Pembeli tidak mau beli"], correct: 0 },
@@ -33,7 +30,6 @@ const quizData = [
     { q: "Jika hari ini hujan, TuyOul berteduh. Hari ini TuyOul tidak berteduh. Maka...", a: ["Hari ini cerah", "Hari ini tidak hujan", "Kawah sedang penuh"], correct: 1 }
 ];
 
-// --- 2. LOGIKA KUIS ---
 function startQuiz() {
     quizScore = 0;
     document.getElementById('game-menu').style.display = 'none';
@@ -43,71 +39,55 @@ function startQuiz() {
 
 function loadQuestion(index) {
     if (index >= quizData.length) {
-        alert("🔥 TOTAL SKOR QUIZ: " + quizScore);
         if (quizScore >= 70) {
-            alert("SELAMAT! Kamu lulus seleksi TuyOul. Diskon 50% Aktif!");
+            alert("🔥 Skor: " + quizScore + ". Lulus Seleksi! Diskon Aktif!");
             applyDiscount();
             showWin();
         } else {
-            alert("Skor kamu di bawah 70. Belajar lagi ya!");
+            alert("Skor " + quizScore + ". Belum cukup sakti!");
             backToMenu();
         }
         return;
     }
-
     const data = quizData[index];
     document.getElementById('quiz-question').innerText = `Pertanyaan ${index + 1}: ${data.q}`;
     const optionsDiv = document.getElementById('quiz-options');
     optionsDiv.innerHTML = '';
-    
     data.a.forEach((opt, i) => {
         const btn = document.createElement('button');
         btn.className = 'btn btn-secondary';
         btn.innerText = opt;
         btn.onclick = () => {
-            if (i === data.correct) {
-                quizScore += 10;
-                loadQuestion(index + 1);
-            } else { 
-                alert("Salah! Jawaban benar: " + data.a[data.correct]);
-                backToMenu(); 
-            }
+            if (i === data.correct) { quizScore += 10; loadQuestion(index + 1); }
+            else { alert("Salah!"); backToMenu(); }
         };
         optionsDiv.appendChild(btn);
     });
 }
 
-// --- 3. SISTEM MENU & NAVIGASI GAME ---
+// --- 2. NAVIGASI ---
 function selectGame(mode) {
     selectedMode = mode;
     gameActive = false;
     clearTimeout(gameLoop);
-    
     document.getElementById('game-menu').style.display = 'none';
     document.getElementById('game-window').style.display = 'block';
-    document.getElementById('quiz-window').style.display = 'none'; 
-    
     const jumpBtn = document.getElementById('virtual-jump-btn');
     const player = document.getElementById('player');
-    player.style.top = ""; 
-    player.style.bottom = "10px";
-
-    // Gunakan maskot TuyOul untuk semua mode visual
     player.innerHTML = '<img src="maskot-tuyul.png" class="tuyul-sprite">'; 
+    player.style.bottom = "10px";
+    player.style.top = "";
 
     if(mode === 'runner') {
         player.className = 'player-runner';
-        player.style.left = "50px";
-        if(jumpBtn) { jumpBtn.style.display = 'inline-block'; jumpBtn.innerText = "JUMP!"; }
+        jumpBtn.style.display = 'inline-block';
     } else if(mode === 'flappy') {
         player.className = 'player-flappy';
-        player.style.left = "80px";
-        player.style.top = "200px"; 
-        if(jumpBtn) { jumpBtn.style.display = 'inline-block'; jumpBtn.innerText = "FLY!"; }
-    } else if(mode === 'coin') {
+        player.style.top = "200px";
+        jumpBtn.style.display = 'inline-block';
+    } else {
         player.className = 'player-coin';
-        player.style.left = "50%";
-        if(jumpBtn) jumpBtn.style.display = 'none';
+        jumpBtn.style.display = 'none';
     }
 }
 
@@ -117,7 +97,6 @@ function startAction() {
     gameActive = true;
     document.getElementById('score').innerText = "Skor: 0";
     document.getElementById('voucher-popup').style.display = 'none';
-    
     document.querySelectorAll('.coin, .obstacle, .pipe, .bomb').forEach(el => el.remove());
 
     if(selectedMode === 'coin') spawnCoin();
@@ -128,30 +107,20 @@ function startAction() {
 function backToMenu() {
     gameActive = false;
     clearTimeout(gameLoop);
-    document.querySelectorAll('.coin, .obstacle, .pipe, .bomb').forEach(el => el.remove());
-    
-    const player = document.getElementById('player');
-    player.className = ''; 
-    player.style.top = ""; 
-    player.style.bottom = "10px";
-
     document.getElementById('game-window').style.display = 'none';
     document.getElementById('quiz-window').style.display = 'none';
     document.getElementById('game-menu').style.display = 'block';
-    score = 0;
-    document.getElementById('score').innerText = "Skor: 0";
 }
 
-// --- 4. LOGIKA GAME COIN ---
+// --- 3. GAME LOGIC (TARGET 1000) ---
 function spawnCoin() {
     if (!gameActive || selectedMode !== 'coin') return;
     const board = document.getElementById('game-board');
     const coin = document.createElement('div');
-    const isBomb = Math.random() < 0.2;
-    
+    const isBomb = Math.random() < 0.25;
     coin.className = isBomb ? 'coin bomb' : 'coin';
     coin.innerHTML = isBomb ? '💣' : '💰';
-    coin.style.left = Math.random() * (board.offsetWidth - 50) + 'px';
+    coin.style.left = Math.random() * (board.offsetWidth - 40) + 'px';
     coin.style.top = '-50px';
     board.appendChild(coin);
 
@@ -160,73 +129,67 @@ function spawnCoin() {
         let top = parseInt(coin.style.top);
         const player = document.getElementById('player');
         
+        // Cek Tabrakan
         if (top > 330 && top < 380 && Math.abs(coin.offsetLeft - player.offsetLeft) < 50) {
             if(isBomb) {
-                score = Math.max(0, score - 20);
+                score = Math.max(0, score - 50);
                 board.classList.add('shake-effect');
-                setTimeout(() => board.classList.remove('shake-effect'), 300);
+                setTimeout(() => board.classList.remove('shake-effect'), 200);
             } else {
-                score += 10;
+                score += 20; // Kasih 20 poin biar ke 1000 ga kelamaan
             }
             document.getElementById('score').innerText = "Skor: " + score;
-            if(score >= 100) showWin();
+            if(score >= 1000) showWin();
             clearInterval(fall); coin.remove();
         } else if (top > 400) {
             clearInterval(fall); coin.remove();
         } else {
-            coin.style.top = (top + 5 + (score/30)) + 'px';
+            // Speed scaling diatur agar tidak terlalu liar di skor tinggi
+            coin.style.top = (top + 5 + (score/200)) + 'px';
         }
     }, 20);
-    gameLoop = setTimeout(spawnCoin, 800);
+    gameLoop = setTimeout(spawnCoin, Math.max(400, 800 - (score/5)));
 }
 
-// --- 5. LOGIKA GAME RUNNER ---
 function spawnObstacle() {
     if (!gameActive || selectedMode !== 'runner') return;
     const board = document.getElementById('game-board');
     const obs = document.createElement('div');
     obs.className = 'obstacle';
-    obs.innerHTML = '🔥'; 
+    obs.innerHTML = '🔥';
     board.appendChild(obs);
 
     let pos = board.offsetWidth;
     let move = setInterval(() => {
         if (!gameActive) { clearInterval(move); obs.remove(); return; }
-        pos -= (7 + score/50);
+        pos -= (7 + (score/150)); // Scaling lebih lambat
         obs.style.left = pos + 'px';
 
         const player = document.getElementById('player');
         let pBottom = parseInt(window.getComputedStyle(player).getPropertyValue("bottom"));
         
         if (pos < 90 && pos > 40 && pBottom < 50) {
-            gameOver("TuyOul-mu kena api kawah!");
-            clearInterval(move); obs.remove();
+            gameOver("Kena Api!");
+            clearInterval(move);
         } else if (pos < -50) {
-            score += 10;
+            score += 25; // 25 poin per rintangan
             document.getElementById('score').innerText = "Skor: " + score;
-            if(score >= 100) showWin();
+            if(score >= 1000) showWin();
             clearInterval(move); obs.remove();
         }
     }, 20);
-    gameLoop = setTimeout(spawnObstacle, Math.random() * 1000 + 800);
+    gameLoop = setTimeout(spawnObstacle, Math.max(600, 1200 - (score/2)));
 }
 
-// --- 6. LOGIKA GAME FLAPPY (VERSI HALUS) ---
 function startFlappyLogic() {
     const player = document.getElementById('player');
     let velocity = 0;
-    let gravityForce = 0.25;
-
     let gravityInterval = setInterval(() => {
         if(!gameActive || selectedMode !== 'flappy') { clearInterval(gravityInterval); return; }
-        velocity += gravityForce;
+        velocity += 0.25;
         let top = parseInt(player.style.top) || 200;
         player.style.top = (top + velocity) + 'px';
-        
-        if(top > 375 || top < -20) {
-            gameOver("TuyOul tenggelam di lava!");
-            clearInterval(gravityInterval);
-        }
+        if(top > 375 || top < -20) { gameOver("Jatuh!"); clearInterval(gravityInterval); }
     }, 20);
     spawnPipe();
 }
@@ -234,28 +197,19 @@ function startFlappyLogic() {
 function spawnPipe() {
     if (!gameActive || selectedMode !== 'flappy') return;
     const board = document.getElementById('game-board');
-    const gap = 170; // Celah lebih lebar agar adil
-    const pipeHeight = Math.random() * (board.offsetHeight - gap - 100) + 50;
-
+    const pipeHeight = Math.random() * 150 + 50;
     const pTop = document.createElement('div');
-    pTop.className = 'pipe';
-    pTop.style.height = pipeHeight + 'px';
-    pTop.style.top = '0';
-    pTop.style.left = board.offsetWidth + 'px';
-    board.appendChild(pTop);
-
     const pBot = document.createElement('div');
-    pBot.className = 'pipe';
-    pBot.style.height = (board.offsetHeight - pipeHeight - gap) + 'px';
-    pBot.style.bottom = '0';
-    pBot.style.left = board.offsetWidth + 'px';
-    board.appendChild(pBot);
+    pTop.className = 'pipe'; pBot.className = 'pipe';
+    pTop.style.height = pipeHeight + 'px'; pTop.style.top = '0';
+    pBot.style.height = (board.offsetHeight - pipeHeight - 160) + 'px'; pBot.style.bottom = '0';
+    pTop.style.left = board.offsetWidth + 'px'; pBot.style.left = board.offsetWidth + 'px';
+    board.appendChild(pTop); board.appendChild(pBot);
 
     let moveP = setInterval(() => {
         if (!gameActive) { clearInterval(moveP); pTop.remove(); pBot.remove(); return; }
         let x = parseInt(pTop.style.left) - 4;
-        pTop.style.left = x + 'px';
-        pBot.style.left = x + 'px';
+        pTop.style.left = x + 'px'; pBot.style.left = x + 'px';
 
         const pRect = document.getElementById('player').getBoundingClientRect();
         const tRect = pTop.getBoundingClientRect();
@@ -263,25 +217,21 @@ function spawnPipe() {
 
         if ((pRect.right > tRect.left && pRect.left < tRect.right && pRect.top < tRect.bottom) ||
             (pRect.right > bRect.left && pRect.left < bRect.right && pRect.bottom > bRect.top)) {
-            gameOver("TuyOul menabrak pilar vulkanik!");
-            clearInterval(moveP);
+            gameOver("Tabrak!"); clearInterval(moveP);
         }
-
         if (x < -60) {
-            score += 5;
+            score += 50; // Flappy lebih susah, poin lebih besar
             document.getElementById('score').innerText = "Skor: " + score;
-            if(score >= 50) showWin();
+            if(score >= 1000) showWin();
             clearInterval(moveP); pTop.remove(); pBot.remove();
         }
     }, 20);
-    gameLoop = setTimeout(spawnPipe, 1500);
+    gameLoop = setTimeout(spawnPipe, 1800);
 }
 
-// --- 7. KONTROL & INPUT ---
+// --- 4. KONTROL ---
 function setupGameControls() {
     const board = document.getElementById('game-board');
-    
-    // Geser (Mouse & Touch)
     const moveH = (e) => {
         if (!gameActive || selectedMode !== 'coin') return;
         const rect = board.getBoundingClientRect();
@@ -291,15 +241,13 @@ function setupGameControls() {
     board.addEventListener('mousemove', moveH);
     board.addEventListener('touchmove', moveH, { passive: false });
 
-    // Keyboard
     window.addEventListener("keydown", (e) => {
         if (e.code === "Space") { e.preventDefault(); doJump(); }
-        if (selectedMode === 'coin' && gameActive) {
-            let p = document.getElementById('player');
-            if(e.key === "ArrowLeft" && p.offsetLeft > 10) p.style.left = (p.offsetLeft - 25) + "px";
-            if(e.key === "ArrowRight" && p.offsetLeft < 340) p.style.left = (p.offsetLeft + 25) + "px";
-        }
     });
+    
+    // Virtual Button Support
+    const btn = document.getElementById('virtual-jump-btn');
+    if(btn) btn.onclick = doJump;
 }
 
 function doJump() {
@@ -309,24 +257,23 @@ function doJump() {
         p.classList.add("jump-animation");
         setTimeout(() => p.classList.remove("jump-animation"), 500);
     } else if (selectedMode === 'flappy') {
-        p.style.top = (parseInt(p.style.top) - 55) + 'px';
+        let currentTop = parseInt(p.style.top);
+        p.style.top = (currentTop - 60) + 'px';
     }
 }
 
 function gameOver(msg) {
     gameActive = false;
-    alert(msg);
+    alert("GAME OVER: " + msg);
     backToMenu();
 }
 
 function showWin() {
     gameActive = false;
     clearTimeout(gameLoop);
-    const popup = document.getElementById('voucher-popup');
-    if(popup) popup.style.display = 'block';
+    document.getElementById('voucher-popup').style.display = 'block';
 }
 
-// --- 8. DISKON & WHATSAPP ORDER ---
 function applyDiscount() {
     isDiscountApplied = true;
     document.querySelectorAll('.display-price').forEach(el => {
@@ -340,36 +287,32 @@ function applyDiscount() {
             el.parentNode.insertBefore(tag, el.nextSibling);
         }
     });
-    alert("🔥 DISKON 50% TELAH DIAKTIFKAN!");
 }
 
 function setupWhatsAppOrdering() {
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn-secondary')) {
             const card = e.target.closest('.product-card');
-            if (!card) return;
             const title = card.querySelector('.product-title').innerText;
             const price = card.querySelector('.new-price')?.innerText || card.querySelector('.display-price').innerText;
-            const text = encodeURIComponent(`🌋 Order TuyOul Vulkanik 🌋\nProduk: ${title}\nHarga: ${price}\nStatus: ${isDiscountApplied ? 'Diskon 50%' : 'Normal'}`);
+            const text = encodeURIComponent(`Order TuyOul Vulkanik\nProduk: ${title}\nHarga: ${price}`);
             window.open(`https://wa.me/6281804554719?text=${text}`, '_blank');
         }
     });
 }
 
-// --- 9. LAIN-LAIN ---
 function smoothScrollNavigation() {
     document.querySelectorAll('a[href^="#"]').forEach(a => {
         a.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if(target) target.scrollIntoView({ behavior: 'smooth' });
+            document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
         });
     });
 }
 
 function highlightActiveProductCards() {
     document.querySelectorAll('.product-card').forEach(c => {
-        c.addEventListener('mouseenter', () => c.style.borderColor = '#ff5722');
-        c.addEventListener('mouseleave', () => c.style.borderColor = '#333');
+        c.onmouseenter = () => c.style.borderColor = '#ff5722';
+        c.onmouseleave = () => c.style.borderColor = '#333';
     });
 }
