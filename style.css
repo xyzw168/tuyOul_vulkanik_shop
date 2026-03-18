@@ -160,6 +160,12 @@ h2 {
     position: absolute; 
     transition: left 0.1s ease-out; 
     z-index: 10;
+    /* Tambahan agar gambar maskot rapi di tengah */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px; /* Lebar kotak tabrakan */
+    height: 60px; /* Tinggi kotak tabrakan */
 }
 
 /* Posisi Player Berdasarkan Mode */
@@ -386,4 +392,23 @@ h2 {
     .menu-buttons {
         grid-template-columns: 1fr; /* Jadi 1 kolom di HP layar kecil */
     }
+}
+/* --- PENGATURAN GAMBAR MASKOT --- */
+.tuyul-sprite {
+    height: 60px;      /* Ukuran tinggi maskot biar gak kegedean */
+    width: auto;       /* Lebar otomatis biar gak gepeng */
+    display: block;
+    margin: 0 auto;
+    transform: scaleX(-1); /* Membalik gambar biar hadap kanan */
+    filter: drop-shadow(0 0 5px rgba(255, 87, 34, 0.3)); /* Efek aura vulkanik */
+}
+
+/* Animasi lari untuk maskot */
+.player-runner .tuyul-sprite {
+    animation: tuyulRun 0.2s infinite alternate ease-in-out;
+}
+
+@keyframes tuyulRun {
+    from { transform: scaleX(-1) translateY(0); }
+    to { transform: scaleX(-1) translateY(-6px) rotate(-2deg); }
 }
