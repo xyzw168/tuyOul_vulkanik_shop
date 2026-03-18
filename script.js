@@ -60,7 +60,7 @@ function selectGame(mode) {
     player.style.bottom = "10px";
 
     if(mode === 'runner') {
-        player.innerHTML = '<img src="maskot-tuyul.png" class="tuyul-run">'; 
+        player.innerHTML = '<img src="maskot-tuyul.png" class="tuyul-sprite">'; 
         player.className = 'player-runner';
         player.style.left = "50px"; 
         if(jumpBtn) { 
