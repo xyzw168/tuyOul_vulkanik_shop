@@ -173,13 +173,14 @@ h2 {
 .player-coin { bottom: 10px; transform: translateX(-50%); }
 
 /* Animasi Loncat */
-.jump-animation {
-    animation: jump 0.5s cubic-bezier(0.1, 0.5, 1, 0.1);
-}
 @keyframes jump {
     0% { bottom: 10px; }
-    50% { bottom: 150px; }
+    40% { bottom: 120px; } /* Tinggi lompatan */
     100% { bottom: 10px; }
+}
+
+.jump-animation {
+    animation: jump 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 /* Objek Game */
