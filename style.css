@@ -126,7 +126,7 @@ h2 {
 .card-body { padding: 20px; width: 60%; display: flex; flex-direction: column; justify-content: center; }
 .price { font-size: 1.4rem; font-weight: 800; color: var(--color-gold); margin: 5px 0; }
 
-/* --- ARCADE SYSTEM (MENU & BOARD) --- */
+/* --- (MENU & BOARD) --- */
 .game-menu {
     text-align: center;
     padding: 50px;
@@ -152,7 +152,7 @@ h2 {
     margin: 20px auto;
     max-width: 800px;
     box-shadow: inset 0 0 50px rgba(255, 87, 34, 0.2);
-    touch-action: none; /* Mencegah layar scroll saat geser player di HP */
+    touch-action: none;
 }
 
 #player { 
@@ -160,24 +160,15 @@ h2 {
     position: absolute; 
     transition: left 0.1s ease-out; 
     z-index: 10;
-    /* Tambahan agar gambar maskot rapi di tengah */
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px; /* Lebar kotak tabrakan */
-    height: 60px; /* Tinggi kotak tabrakan */
+    width: 60px; 
+    height: 60px; 
 }
 
-/* Posisi Player Berdasarkan Mode */
 .player-runner { bottom: 10px; left: 50px; }
 .player-coin { bottom: 10px; transform: translateX(-50%); }
-
-/* Animasi Loncat */
-@keyframes jump {
-    0% { bottom: 10px; }
-    40% { bottom: 120px; } /* Tinggi lompatan */
-    100% { bottom: 10px; }
-}
 
 .jump-animation {
     animation: jump 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -279,16 +270,14 @@ h2 {
     .main-nav ul li { margin: 0 10px; }
     .menu-buttons { flex-direction: column; align-items: center; }
 }
-/* Styling Gambar di dalam Player */
+
 .tuyul-sprite {
-    width: 80px; /* Sesuaikan ukuran maskotmu */
+    width: 80px; 
     height: auto;
-    /* SOLUSI ARAH: Jika gambar aslimu hadap kiri, gunakan scaleX(-1) untuk membalik ke kanan */
     transform: scaleX(-1); 
     display: block;
 }
 
-/* SOLUSI ANIMASI LARI: Membuat efek lari (jogging) */
 .player-runner .tuyul-sprite {
     animation: tuyulRun 0.25s infinite alternate ease-in-out;
 }
@@ -298,12 +287,11 @@ h2 {
     to { transform: scaleX(-1) translateY(-8px) rotate(-3deg); }
 }
 
-/* Saat loncat, hentikan animasi lari supaya terlihat natural */
 .jump-animation .tuyul-sprite {
     animation: none;
     transform: scaleX(-1) rotate(-10deg);
 }
-/* --- TUYOUL FLAPPY STYLING --- */
+/* --- TUYOUL FLAPPY  --- */
 .player-flappy {
     position: absolute;
     z-index: 10;
@@ -314,7 +302,6 @@ h2 {
 .pipe {
     position: absolute;
     width: 60px;
-    /* Gradasi warna lava cair */
     background: linear-gradient(90deg, #bf360c, #ff5722, #bf360c);
     border-left: 4px solid #ffcc00;
     border-right: 4px solid #ffcc00;
@@ -322,7 +309,6 @@ h2 {
     z-index: 5;
 }
 
-/* Tambahkan moncong pipa agar lebih bertekstur */
 .pipe::after {
     content: '';
     position: absolute;
@@ -333,12 +319,11 @@ h2 {
     border: 3px solid #ffcc00;
 }
 
-/* Pipa atas moncongnya di bawah, pipa bawah moncongnya di atas */
 [style*="top: 0"]::after { bottom: 0; }
 [style*="bottom: 0"]::after { top: 0; }
-/* --- QUIZ WINDOW STYLING --- */
+/* --- QUIZ --- */
 #quiz-window {
-    display: none; /* Default sembunyi */
+    display: none;
     margin: 20px auto;
     max-width: 800px;
     animation: fadeIn 0.5s ease;
@@ -360,6 +345,7 @@ h2 {
     line-height: 1.6;
     border-left: 5px solid var(--color-gold);
     padding-left: 15px;
+    white-space: pre-line;
 }
 
 #quiz-options {
@@ -373,7 +359,7 @@ h2 {
     padding: 15px 20px;
     background: #222;
     border: 1px solid #444;
-    text-transform: none; /* Biar huruf tidak kapital semua */
+    text-transform: none;
     font-size: 1rem;
     border-radius: 10px;
     transition: all 0.2s ease;
@@ -382,17 +368,16 @@ h2 {
 #quiz-options .btn-secondary:hover {
     background: var(--color-lava-red);
     border-color: var(--color-gold);
-    transform: translateX(10px); /* Efek geser sedikit saat hover */
+    transform: translateX(10px);
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-/* Perbaikan layout tombol menu game */
 .menu-buttons {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 Kolom sejajar */
+    grid-template-columns: repeat(2, 1fr); /* 2 Kolom */
     gap: 15px;
     max-width: 500px;
     margin: 25px auto 0;
@@ -400,20 +385,18 @@ h2 {
 
 @media (max-width: 600px) {
     .menu-buttons {
-        grid-template-columns: 1fr; /* Jadi 1 kolom di HP layar kecil */
+        grid-template-columns: 1fr; /*  HP  */
     }
 }
 /* --- PENGATURAN GAMBAR MASKOT --- */
 .tuyul-sprite {
-    height: 60px;      /* Ukuran tinggi maskot biar gak kegedean */
-    width: auto;       /* Lebar otomatis biar gak gepeng */
+    height: 60px;      /* Ukuran tinggi maskot */
+    width: auto;     
     display: block;
     margin: 0 auto;
-    transform: scaleX(-1); /* Membalik gambar biar hadap kanan */
-    filter: drop-shadow(0 0 5px rgba(255, 87, 34, 0.3)); /* Efek aura vulkanik */
-}
+    transform: scaleX(-1); /* Membalik gambarn */
+    filter: drop-shadow(0 0 5px rgba(255, 87, 34, 0.3)); 
 
-/* Animasi lari untuk maskot */
 .player-runner .tuyul-sprite {
     animation: tuyulRun 0.2s infinite alternate ease-in-out;
 }
@@ -422,7 +405,6 @@ h2 {
     from { transform: scaleX(-1) translateY(0); }
     to { transform: scaleX(-1) translateY(-6px) rotate(-2deg); }
 }
-/* Animasi Loncat Mode Runner */
 .jump-animation {
     animation: tuyoulJump 0.5s ease-out;
 }
@@ -431,4 +413,74 @@ h2 {
     0%   { bottom: 10px; }
     50%  { bottom: 120px; } 
     100% { bottom: 10px; }
+}
+/* --- TENTANG KAMI --- */
+.about {
+    padding: 100px 0;
+    background: linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)), 
+                url('https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?q=80&w=1500'); 
+    background-attachment: fixed; 
+    background-size: cover;
+    background-position: center;
+}
+
+.about-content {
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    padding: 40px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 87, 34, 0.2); 
+    max-width: 850px;
+    margin: 0 auto;
+    text-align: center;
+    transition: all 0.4s ease;
+}
+
+.about-content:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-lava-red);
+    box-shadow: 0 15px 40px rgba(255, 87, 34, 0.15);
+}
+
+.about h2 {
+    border-bottom: none; 
+    margin-bottom: 30px;
+    display: block; 
+}
+
+/* --- FLOATING WHATSAPP BUTTON --- */
+.floating-wa {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: #25d366;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+
+.floating-wa img { width: 25px; height: 25px; }
+
+.floating-wa:hover {
+    transform: scale(1.1);
+    background: #128c7e;
+}
+
+@media (max-width: 600px) {
+    .floating-wa span { display: none; }
+    .floating-wa { padding: 15px; border-radius: 50%; bottom: 20px; right: 20px; }
+}
+
+#best-score {
+    color: var(--color-gold);
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
 }
