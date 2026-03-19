@@ -401,3 +401,8 @@ function playMBGSound() {
         }, i * 150);
     });
 }
+
+//TUTUP POP UP
+function closeWinPopup() {
+    document.getElementById('voucher-popup').style.display = 'none';
+}
