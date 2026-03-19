@@ -422,3 +422,13 @@ h2 {
     from { transform: scaleX(-1) translateY(0); }
     to { transform: scaleX(-1) translateY(-6px) rotate(-2deg); }
 }
+/* Animasi Loncat Mode Runner */
+.jump-animation {
+    animation: tuyoulJump 0.5s ease-out;
+}
+
+@keyframes tuyoulJump {
+    0%   { bottom: 10px; }
+    50%  { bottom: 120px; } 
+    100% { bottom: 10px; }
+}
