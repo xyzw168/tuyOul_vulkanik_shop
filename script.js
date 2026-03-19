@@ -41,6 +41,7 @@ function loadQuestion(index) {
             alert("🔥 GOKIL! Kamu emang TuyOul Jenius Duta MBG. Diskon 50% Aktif!");
             applyDiscount();
             showWin();
+            backToMenu();
         } else {
             alert("Skor kamu " + quizScore + ". Belum tembus target 90. Coba lagi! Tetap semangat MBG!");
             backToMenu();
@@ -135,28 +136,33 @@ function spawnCoin() {
     coin.style.top = '-50px';
     board.appendChild(coin);
 
-    let fall = setInterval(() => {
-        if (!gameActive) { clearInterval(fall); coin.remove(); return; }
-        let top = parseInt(coin.style.top);
-        const player = document.getElementById('player');
-        
-        if (top > 330 && top < 380 && Math.abs(coin.offsetLeft - player.offsetLeft) < 50) {
-            if(isBomb) {
-                score = Math.max(0, score - 100); 
-                board.classList.add('shake-effect');
-                setTimeout(() => board.classList.remove('shake-effect'), 200);
-            } else { 
-                score += 20; 
-            }
-            document.getElementById('score').innerText = "Skor: " + score;
-            if(score >= 1000) showWin();
-            clearInterval(fall); coin.remove();
-        } else if (top > 400) {
-            clearInterval(fall); coin.remove();
-        } else {
-            coin.style.top = (top + 7 + (score/150)) + 'px';
+let fall = setInterval(() => {
+    if (!gameActive) { clearInterval(fall); coin.remove(); return; }
+    
+    let top = parseInt(coin.style.top);
+    const player = document.getElementById('player');
+    if (top > 330 && top < 380 && Math.abs(coin.offsetLeft - player.offsetLeft) < 50) {
+        if(isBomb) {
+            score = Math.max(0, score - 100); 
+            board.classList.add('shake-effect');
+            setTimeout(() => board.classList.remove('shake-effect'), 200);
+        } else { 
+            score += 20; 
         }
-    }, 20);
+                document.getElementById('score').innerText = "Skor: " + score;
+                if(score >= 1000 && !isDiscountApplied) {
+            showWin(); 
+        }
+
+        clearInterval(fall); 
+        coin.remove();
+    } else if (top > 400) {
+        clearInterval(fall); 
+        coin.remove();
+    } else {
+        coin.style.top = (top + 7 + (score/150)) + 'px';
+    }
+}, 20);
     
     let spawnSpeed = Math.max(200, 500 - (score/4));
     gameLoop = setTimeout(spawnCoin, spawnSpeed);
@@ -171,26 +177,43 @@ function spawnObstacle() {
     board.appendChild(obs);
 
     let pos = board.offsetWidth;
+    const player = document.getElementById('player'); 
     let move = setInterval(() => {
-        if (!gameActive) { clearInterval(move); obs.remove(); return; }
+        if (!gameActive) { 
+            clearInterval(move); 
+            obs.remove(); 
+            return; 
+        }
+        
         pos -= (6 + (score/200)); 
         obs.style.left = pos + 'px';
+        
         const pRect = player.getBoundingClientRect();
         const oRect = obs.getBoundingClientRect();
 
-        if (pRect.right - 15 > oRect.left + 15 && pRect.left + 15 < oRect.right - 15 && pRect.bottom - 5 > oRect.top + 5) {
-            gameOver("yahh tuyOOul kamu hangus kena api! MBGMBGMBG"); clearInterval(move);
-        } else if (pos < -50) {
+        if (pRect.right - 15 > oRect.left + 15 && 
+            pRect.left + 15 < oRect.right - 15 && 
+            pRect.bottom - 5 > oRect.top + 5) {
+            
+            gameOver("yahh tuyOOul kamu hangus kena api! MBGMBGMBG"); 
+            clearInterval(move);
+            obs.remove(); 
+            return;
+        } 
+        else if (pos < -50) {
             score += 25;
             document.getElementById('score').innerText = "Skor: " + score;
-            if(score >= 1000) showWin();
-            clearInterval(move); obs.remove();
+                        if(score >= 1000 && !isDiscountApplied) {
+                showWin(); 
+            }
+            
+            clearInterval(move); 
+            obs.remove();
         }
     }, 16);
     gameLoop = setTimeout(spawnObstacle, Math.max(700, 1500 - (score/2)));
 }
-
-// FLAPPY MODE (FIXED GRAVITY)
+// FLAPPY MODE
 function startFlappyLogic() {
     const player = document.getElementById('player');
     flappyVelocity = 0; 
@@ -224,26 +247,42 @@ function spawnPipe() {
     pTop.style.left = board.offsetWidth + 'px'; pBot.style.left = board.offsetWidth + 'px';
     board.appendChild(pTop); board.appendChild(pBot);
 
-    let moveP = setInterval(() => {
-        if (!gameActive) { clearInterval(moveP); pTop.remove(); pBot.remove(); return; }
+let moveP = setInterval(() => {
+        if (!gameActive) { 
+            clearInterval(moveP); 
+            pTop.remove(); 
+            pBot.remove(); 
+            return; 
+        }
+
         let x = parseInt(pTop.style.left) - 3;
-        pTop.style.left = x + 'px'; pBot.style.left = x + 'px';
-        const pRect = player.getBoundingClientRect();
+        pTop.style.left = x + 'px'; 
+        pBot.style.left = x + 'px';
+
+        const playerElement = document.getElementById('player');
+        const pRect = playerElement.getBoundingClientRect();
         const tRect = pTop.getBoundingClientRect();
         const bRect = pBot.getBoundingClientRect();
 
         if ((pRect.right - 5 > tRect.left && pRect.left + 5 < tRect.right && pRect.top + 5 < tRect.bottom) ||
             (pRect.right - 5 > bRect.left && pRect.left + 5 < bRect.right && pRect.bottom - 5 > bRect.top)) {
-            gameOver("Nabrak!"); clearInterval(moveP);
+            gameOver("TuyOul Nabrak Pilar Vulkanik!"); 
+            clearInterval(moveP);
+            return;
         }
         if (x < -60) {
             score += 50;
             document.getElementById('score').innerText = "Skor: " + score;
-            if(score >= 1000) showWin();
-            clearInterval(moveP); pTop.remove(); pBot.remove();
+              if(score >= 1000 && !isDiscountApplied) {
+                showWin(); 
+            }
+
+            clearInterval(moveP); 
+            pTop.remove(); 
+            pBot.remove();
         }
     }, 20);
-    gameLoop = setTimeout(spawnPipe, 2500); 
+    gameLoop = setTimeout(spawnPipe, 2500);
 }
 
 // --- 4. KONTROL & JUMP (GABUNGAN) ---
@@ -288,9 +327,8 @@ function gameOver(msg) {
 }
 
 function showWin() {
-    gameActive = false;
-    clearTimeout(gameLoop);
     document.getElementById('voucher-popup').style.display = 'block';
+    applyDiscount(); 
 }
 
 function applyDiscount() {
