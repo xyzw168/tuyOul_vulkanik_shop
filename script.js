@@ -1,13 +1,10 @@
-/**
- * TUYUL VULKANIK - OFFICIAL ARCADE SCRIPT (OPTIMIZED FOR 1000 PTS)
- */
-
 let score = 0;
 let quizScore = 0;
 let gameActive = false;
 let gameLoop;
 let isDiscountApplied = false;
 let selectedMode = ''; 
+let flappyVelocity = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
     smoothScrollNavigation();
@@ -38,57 +35,44 @@ function startQuiz() {
 }
 
 function loadQuestion(index) {
-    // 1. Cek apakah kuis sudah selesai
     if (index >= quizData.length) {
         alert("📊 KUIS SELESAI!\nTotal Skor: " + quizScore + " / 100");
-        
-        // Syarat lulus minimal 90 (Hanya boleh salah 1)
         if (quizScore >= 90) {
             alert("🔥 GOKIL! Kamu emang TuyOul Jenius. Diskon 50% Aktif!");
             applyDiscount();
             showWin();
         } else {
-            alert("Skor kamu " + quizScore + ". Belum tembus target 90. Coba lagi sampai hafal!");
+            alert("Skor kamu " + quizScore + ". Belum tembus target 90. Coba lagi!");
             backToMenu();
         }
         return;
     }
 
-    // 2. Tampilkan Pertanyaan
     const data = quizData[index];
     const quizQ = document.getElementById('quiz-question');
     const optionsDiv = document.getElementById('quiz-options');
-    
     quizQ.innerText = `Soal ${index + 1} / 10:\n${data.q}`;
     optionsDiv.innerHTML = ''; 
-    
-    // 3. Buat Pilihan Jawaban
+
     data.a.forEach((opt, i) => {
         const btn = document.createElement('button');
         btn.className = 'btn btn-secondary';
-        btn.style.width = "100%";
-        btn.style.marginBottom = "10px";
-        btn.style.textAlign = "left";
+        btn.style.width = "100%"; btn.style.marginBottom = "10px";
         btn.innerText = `${String.fromCharCode(65 + i)}. ${opt}`;
-        
         btn.onclick = () => {
-            // Cek Jawaban
             if (i === data.correct) {
                 quizScore += 10;
                 alert("✅ MANTAP! Jawabanmu benar.");
             } else {
-                // HANYA NOTIFIKASI SALAH (Tanpa bocoran)
-                alert("❌ SALAH!\n\nSayang sekali poinmu tidak bertambah. Fokus ke soal berikutnya!");
+                alert("❌ SALAH!");
             }
-            
-            // Pindah ke soal berikutnya
             loadQuestion(index + 1);
         };
         optionsDiv.appendChild(btn);
     });
 }
 
-// --- 2. NAVIGASI ---
+// --- 2. NAVIGASI & START ---
 function selectGame(mode) {
     selectedMode = mode;
     gameActive = false;
@@ -135,7 +119,9 @@ function backToMenu() {
     document.getElementById('game-menu').style.display = 'block';
 }
 
-// --- 3. GAME LOGIC (TARGET 1000) ---
+// --- 3. GAME LOGIC ---
+
+// COIN MODE
 function spawnCoin() {
     if (!gameActive || selectedMode !== 'coin') return;
     const board = document.getElementById('game-board');
@@ -151,30 +137,22 @@ function spawnCoin() {
         if (!gameActive) { clearInterval(fall); coin.remove(); return; }
         let top = parseInt(coin.style.top);
         const player = document.getElementById('player');
-        
-        // Cek Tabrakan
         if (top > 330 && top < 380 && Math.abs(coin.offsetLeft - player.offsetLeft) < 50) {
             if(isBomb) {
                 score = Math.max(0, score - 50);
                 board.classList.add('shake-effect');
                 setTimeout(() => board.classList.remove('shake-effect'), 200);
-            } else {
-                score += 20; // Kasih 20 poin biar ke 1000 ga kelamaan
-            }
+            } else { score += 20; }
             document.getElementById('score').innerText = "Skor: " + score;
             if(score >= 1000) showWin();
             clearInterval(fall); coin.remove();
-        } else if (top > 400) {
-            clearInterval(fall); coin.remove();
-        } else {
-            // Speed scaling diatur agar tidak terlalu liar di skor tinggi
-            coin.style.top = (top + 5 + (score/200)) + 'px';
-        }
+        } else if (top > 400) { clearInterval(fall); coin.remove(); }
+        else { coin.style.top = (top + 5 + (score/200)) + 'px'; }
     }, 20);
     gameLoop = setTimeout(spawnCoin, Math.max(400, 800 - (score/5)));
 }
 
-// --- PERBAIKAN RUNNER (HITBOX LEBIH ADIL) ---
+// RUNNER MODE
 function spawnObstacle() {
     if (!gameActive || selectedMode !== 'runner') return;
     const board = document.getElementById('game-board');
@@ -186,79 +164,39 @@ function spawnObstacle() {
     let pos = board.offsetWidth;
     let move = setInterval(() => {
         if (!gameActive) { clearInterval(move); obs.remove(); return; }
-        
-        // Kecepatan gerak rintangan
         pos -= (6 + (score/200)); 
         obs.style.left = pos + 'px';
-
-        const player = document.getElementById('player');
-        // Ambil posisi realtime dengan getBoundingClientRect untuk akurasi tinggi
         const pRect = player.getBoundingClientRect();
         const oRect = obs.getBoundingClientRect();
 
-        // LOGIKA HITBOX (Dikecilkan 15px agar tidak gampang mati)
-        const isColliding = (
-            pRect.right - 15 > oRect.left + 15 && 
-            pRect.left + 15 < oRect.right - 15 && 
-            pRect.bottom - 5 > oRect.top + 5
-        );
-
-        if (isColliding) {
-            gameOver("Waduh, TuyOul-mu kepanasan kena api!");
-            clearInterval(move);
-            obs.remove();
+        if (pRect.right - 15 > oRect.left + 15 && pRect.left + 15 < oRect.right - 15 && pRect.bottom - 5 > oRect.top + 5) {
+            gameOver("Kena Api!"); clearInterval(move);
         } else if (pos < -50) {
             score += 25;
             document.getElementById('score').innerText = "Skor: " + score;
             if(score >= 1000) showWin();
-            clearInterval(move);
-            obs.remove();
+            clearInterval(move); obs.remove();
         }
-    }, 16); // 16ms = 60fps, lebih halus dari 20ms
-    
-    // Jarak antar api (Makin tinggi skor, makin sering muncul tapi ada batas minimal)
-    let nextSpawn = Math.max(700, 1500 - (score/2));
-    gameLoop = setTimeout(spawnObstacle, nextSpawn);
+    }, 16);
+    gameLoop = setTimeout(spawnObstacle, Math.max(700, 1500 - (score/2)));
 }
 
-// --- JUMP YANG LEBIH RESPONSIF ---
-function doJump() {
-    if (!gameActive) return;
-    const p = document.getElementById('player');
-    
-    if (selectedMode === 'runner') {
-        if (!p.classList.contains("jump-animation")) {
-            p.classList.add("jump-animation");
-            // Durasi animasi di CSS harus pas (misal 0.5s)
-            setTimeout(() => p.classList.remove("jump-animation"), 500);
-        }
-    } else if (selectedMode === 'flappy') {
-        // Buat flappy lebih ringan
-        let currentTop = parseInt(p.style.top) || 200;
-        p.style.top = (currentTop - 65) + 'px';
-    }
-}
-
-// --- 6. LOGIKA GAME FLAPPY (OPTIMIZED - ANTI JATUH KONYOL) ---
+// FLAPPY MODE (FIXED GRAVITY)
 function startFlappyLogic() {
     const player = document.getElementById('player');
-    let velocity = 0;
-    let gravityForce = 0.15; // JAUH LEBIH RINGAN (Sebelumnya 0.25)
+    flappyVelocity = 0; 
+    player.style.top = "200px";
 
     let gravityInterval = setInterval(() => {
-        if(!gameActive || selectedMode !== 'flappy') { 
-            clearInterval(gravityInterval); 
-            return; 
-        }
+        if(!gameActive || selectedMode !== 'flappy') { clearInterval(gravityInterval); return; }
         
-        velocity += gravityForce;
-        let top = parseInt(player.style.top) || 200;
-        player.style.top = (top + velocity) + 'px';
+        flappyVelocity += 0.25; // Gravitasi
+        let top = parseFloat(player.style.top) || 200;
+        let newTop = top + flappyVelocity;
+        player.style.top = newTop + 'px';
         
-        // Cek batas atas dan bawah kawah
-        if(top > 380 || top < -50) {
-            gameOver("TuyOul tenggelam di lava!");
-            clearInterval(gravityInterval);
+        if(newTop > 380 || newTop < -50) {
+            gameOver("TuyOul Jatuh!"); clearInterval(gravityInterval);
         }
     }, 20);
     spawnPipe();
@@ -267,71 +205,39 @@ function startFlappyLogic() {
 function spawnPipe() {
     if (!gameActive || selectedMode !== 'flappy') return;
     const board = document.getElementById('game-board');
-    const gap = 180; // Celah lebih lebar (Lebih adil)
+    const gap = 180;
     const pipeHeight = Math.random() * (board.offsetHeight - gap - 100) + 50;
-
     const pTop = document.createElement('div');
     const pBot = document.createElement('div');
-    pTop.className = 'pipe';
-    pBot.className = 'pipe';
-    
-    pTop.style.height = pipeHeight + 'px';
-    pTop.style.top = '0';
-    pBot.style.height = (board.offsetHeight - pipeHeight - gap) + 'px';
-    pBot.style.bottom = '0';
-    
-    let startX = board.offsetWidth;
-    pTop.style.left = startX + 'px';
-    pBot.style.left = startX + 'px';
-    
-    board.appendChild(pTop);
-    board.appendChild(pBot);
+    pTop.className = 'pipe'; pBot.className = 'pipe';
+    pTop.style.height = pipeHeight + 'px'; pTop.style.top = '0';
+    pBot.style.height = (board.offsetHeight - pipeHeight - gap) + 'px'; pBot.style.bottom = '0';
+    pTop.style.left = board.offsetWidth + 'px'; pBot.style.left = board.offsetWidth + 'px';
+    board.appendChild(pTop); board.appendChild(pBot);
 
     let moveP = setInterval(() => {
         if (!gameActive) { clearInterval(moveP); pTop.remove(); pBot.remove(); return; }
-        let x = parseInt(pTop.style.left) - 3; // GERAKAN PIPA LEBIH LAMBAT (Sebelumnya 4)
-        pTop.style.left = x + 'px';
-        pBot.style.left = x + 'px';
-
-        const pRect = document.getElementById('player').getBoundingClientRect();
+        let x = parseInt(pTop.style.left) - 3;
+        pTop.style.left = x + 'px'; pBot.style.left = x + 'px';
+        const pRect = player.getBoundingClientRect();
         const tRect = pTop.getBoundingClientRect();
         const bRect = pBot.getBoundingClientRect();
 
-        // Hitbox dikurangi 5px agar lebih bersahabat
         if ((pRect.right - 5 > tRect.left && pRect.left + 5 < tRect.right && pRect.top + 5 < tRect.bottom) ||
             (pRect.right - 5 > bRect.left && pRect.left + 5 < bRect.right && pRect.bottom - 5 > bRect.top)) {
-            gameOver("TuyOul menabrak pilar!");
-            clearInterval(moveP);
+            gameOver("Nabrak!"); clearInterval(moveP);
         }
-
         if (x < -60) {
-            score += 50; // Skor tetap besar
+            score += 50;
             document.getElementById('score').innerText = "Skor: " + score;
             if(score >= 1000) showWin();
-            clearInterval(moveP); 
-            pTop.remove(); 
-            pBot.remove();
+            clearInterval(moveP); pTop.remove(); pBot.remove();
         }
     }, 20);
-    
-    // Jarak antar pipa lebih manusiawi
     gameLoop = setTimeout(spawnPipe, 2500); 
 }
 
-function doJump() {
-    if (!gameActive) return;
-    const p = document.getElementById('player');
-    
-    if (selectedMode === 'runner' && !p.classList.contains("jump-animation")) {
-        p.classList.add("jump-animation");
-        setTimeout(() => p.classList.remove("jump-animation"), 500);
-    } else if (selectedMode === 'flappy') {
-        // LOMPATAN LEBIH RESPONSIF
-        let currentTop = parseInt(p.style.top) || 200;
-        p.style.top = (currentTop - 70) + 'px'; // Naik lebih tinggi sekali klik
-    }
-}
-// --- 4. KONTROL ---
+// --- 4. KONTROL & JUMP (GABUNGAN) ---
 function setupGameControls() {
     const board = document.getElementById('game-board');
     const moveH = (e) => {
@@ -344,26 +250,29 @@ function setupGameControls() {
     board.addEventListener('touchmove', moveH, { passive: false });
 
     window.addEventListener("keydown", (e) => {
-        if (e.code === "Space") { e.preventDefault(); doJump(); }
+        if (e.code === "Space" || e.code === "ArrowUp") { e.preventDefault(); doJump(); }
     });
     
-    // Virtual Button Support
     const btn = document.getElementById('virtual-jump-btn');
-    if(btn) btn.onclick = doJump;
+    if(btn) btn.onclick = (e) => { e.preventDefault(); doJump(); };
 }
 
 function doJump() {
     if (!gameActive) return;
     const p = document.getElementById('player');
-    if (selectedMode === 'runner' && !p.classList.contains("jump-animation")) {
-        p.classList.add("jump-animation");
-        setTimeout(() => p.classList.remove("jump-animation"), 500);
+    
+    if (selectedMode === 'runner') {
+        if (!p.classList.contains("jump-animation")) {
+            p.classList.add("jump-animation");
+            setTimeout(() => p.classList.remove("jump-animation"), 500);
+        }
     } else if (selectedMode === 'flappy') {
-        let currentTop = parseInt(p.style.top);
-        p.style.top = (currentTop - 60) + 'px';
+        // RESET VELOCITY SAAT JUMP (Ini kuncinya!)
+        flappyVelocity = -6; 
     }
 }
 
+// --- 5. FINISHING ---
 function gameOver(msg) {
     gameActive = false;
     alert("GAME OVER: " + msg);
@@ -381,7 +290,6 @@ function applyDiscount() {
     document.querySelectorAll('.display-price').forEach(el => {
         const original = parseInt(el.getAttribute('data-original'));
         el.style.textDecoration = "line-through";
-        el.style.color = "#888";
         if (!el.nextElementSibling?.classList.contains('new-price')) {
             const tag = document.createElement('span');
             tag.className = 'new-price';
@@ -395,6 +303,7 @@ function setupWhatsAppOrdering() {
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn-secondary')) {
             const card = e.target.closest('.product-card');
+            if(!card) return;
             const title = card.querySelector('.product-title').innerText;
             const price = card.querySelector('.new-price')?.innerText || card.querySelector('.display-price').innerText;
             const text = encodeURIComponent(`Order TuyOul Vulkanik\nProduk: ${title}\nHarga: ${price}`);
